@@ -1,6 +1,6 @@
 {
-  "name": "fireplanner",
-  "version": "1.0.0",
+  "name": "fire",
+  "version": "1.0.1",
   "description": "Template",
   "scripts": {
     "dev": "webpack serve --mode development",
