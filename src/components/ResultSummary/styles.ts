@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 export const ResultCard = styled.div<{ isSuccess: boolean }>`
-  background-color: ${({ isSuccess }) => (isSuccess ? 'color-mix(in srgb, var(--success-1) 10%, transparent)' : 'color-mix(in srgb, var(--warning-1) 10%, transparent)')};
-  border: 1px solid ${({ isSuccess }) => (isSuccess ? 'var(--success-1)' : 'var(--warning-1)')};
+  background-color: ${({ isSuccess }) => (isSuccess ? 'color-mix(in srgb, var(--imspdr-success-1) 10%, transparent)' : 'color-mix(in srgb, var(--imspdr-warning-1) 10%, transparent)')};
+  border: 1px solid ${({ isSuccess }) => (isSuccess ? 'var(--imspdr-success-1)' : 'var(--imspdr-warning-1)')};
   border-radius: 12px;
   padding: 20px;
   display: flex;

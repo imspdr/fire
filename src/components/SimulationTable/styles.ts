@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 export const TableContainer = styled.div`
   overflow-x: auto;
   border-radius: 8px;
-  border: 1px solid var(--background-3);
+  border: 1px solid var(--imspdr-background-3);
   margin-top: 16px;
 `;
 
@@ -15,13 +15,13 @@ export const StyledTable = styled.table`
   th, td {
     padding: 8px 10px;
     text-align: right;
-    border-bottom: 1px solid var(--background-3);
+    border-bottom: 1px solid var(--imspdr-background-3);
     font-size: 13px;
-    color: var(--foreground-1);
+    color: var(--imspdr-foreground-1);
   }
 
   th {
-    background-color: var(--background-2);
+    background-color: var(--imspdr-background-2);
     font-weight: 600;
     position: sticky;
     top: 0;
@@ -35,11 +35,11 @@ export const StyledTable = styled.table`
   }
 
   tr.fire-row {
-    background-color: color-mix(in srgb, var(--success-1) 10%, transparent);
+    background-color: color-mix(in srgb, var(--imspdr-success-1) 10%, transparent);
   }
   
   tr.isa-cancel-row {
-    background-color: color-mix(in srgb, var(--warning-1) 20%, transparent);
+    background-color: color-mix(in srgb, var(--imspdr-warning-1) 20%, transparent);
   }
   
   tr:last-child td {

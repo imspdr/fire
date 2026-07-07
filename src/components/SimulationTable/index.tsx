@@ -30,10 +30,10 @@ export const SimulationTable: FC<Props> = ({ mode, simpleResult, complexResult }
                 <td>{row.year}년</td>
                 <td>{formatNumber(row.startInvestedCash)}</td>
                 <td>{formatNumber(row.savingsAdded)}</td>
-                <td style={{ color: row.livingExpenseWithdrawal > 0 ? 'var(--danger-1)' : 'inherit' }}>
+                <td style={{ color: row.livingExpenseWithdrawal > 0 ? 'var(--imspdr-danger-1)' : 'inherit' }}>
                   {row.livingExpenseWithdrawal > 0 ? `-${formatNumber(row.livingExpenseWithdrawal)}` : 0}
                 </td>
-                <td style={{ color: 'var(--success-1)' }}>+{formatNumber(row.interestEarned)}</td>
+                <td style={{ color: 'var(--imspdr-success-1)' }}>+{formatNumber(row.interestEarned)}</td>
               </tr>
             ))}
           </tbody>
@@ -66,10 +66,10 @@ export const SimulationTable: FC<Props> = ({ mode, simpleResult, complexResult }
                 <td>{formatNumber(row.startGeneralCash)}</td>
                 <td>{formatNumber(row.startIsaTotal)}</td>
                 <td>{formatNumber(row.savingsAdded)}</td>
-                <td style={{ color: row.livingExpenseWithdrawal > 0 ? 'var(--danger-1)' : 'inherit' }}>
+                <td style={{ color: row.livingExpenseWithdrawal > 0 ? 'var(--imspdr-danger-1)' : 'inherit' }}>
                   {row.livingExpenseWithdrawal > 0 ? `-${formatNumber(row.livingExpenseWithdrawal)}` : 0}
                 </td>
-                <td style={{ color: 'var(--success-1)' }}>+{formatNumber(row.generalInterestEarned + row.isaInterestEarned)}</td>
+                <td style={{ color: 'var(--imspdr-success-1)' }}>+{formatNumber(row.generalInterestEarned + row.isaInterestEarned)}</td>
               </tr>
             ))}
           </tbody>

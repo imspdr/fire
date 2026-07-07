@@ -20,17 +20,15 @@ export const Section = styled.section`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background-color: var(--background-2);
+  background-color: var(--imspdr-background-2);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 12px var(--shadow);
-  border: 1px solid var(--background-3);
+  border: 1px solid var(--imspdr-background-3);
 
   @media (max-width: 767px) {
     padding: 0;
     gap: 16px;
     border-radius: 0;
-    box-shadow: none;
     border: none;
     background-color: transparent;
   }
