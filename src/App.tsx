@@ -43,7 +43,7 @@ const AppLayout: FC = () => {
 
   return (
     <Layout
-      title="Template Project"
+      title="FIRE Planner"
       onHomeClick={() => navigate('/')}
     >
       <Routes>
