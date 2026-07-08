@@ -8,6 +8,7 @@ export interface YearData {
   endInvestedCash: number;
   interestEarned: number;
   isFire: boolean;
+  totalNetWorth: number;
 }
 
 export interface ComplexYearData {
@@ -23,10 +24,13 @@ export interface ComplexYearData {
   isaInterestEarned: number;
   potentialTotalCash: number;
   isFire: boolean;
+  totalNetWorth: number;
 }
 
 export interface CalcParams {
   general: number;
+  fixedCash: number;
+  targetFixedCash: number;
   initialIsaPrincipal: number;
   savings: number;
   preTaxRate: number;

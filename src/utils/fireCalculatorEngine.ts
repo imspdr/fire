@@ -1,11 +1,12 @@
 import { CalcParams, YearData, ComplexYearData } from '../types/fire';
 
 export const calculateSimple = (params: CalcParams) => {
-  const { general, savings, preTaxRate, target, currentYear, remainingMonths } = params;
+  const { general, fixedCash, targetFixedCash, savings, preTaxRate, target, currentYear, remainingMonths } = params;
   const netRate = preTaxRate * (1 - 0.154);
   const requiredFireCash = (target / (netRate / 100)) + target;
   
   let currentInvested = general;
+  let currentFixed = fixedCash;
   const projection: YearData[] = [];
   let foundFireYear: number | null = null;
 
@@ -13,8 +14,10 @@ export const calculateSimple = (params: CalcParams) => {
     const year = currentYear + i;
     const startInvestedCash = currentInvested;
     
-    if (foundFireYear === null && currentInvested >= requiredFireCash) {
+    if (foundFireYear === null && (currentInvested + currentFixed) >= (requiredFireCash + targetFixedCash)) {
       foundFireYear = year;
+      currentInvested = (currentInvested + currentFixed) - targetFixedCash;
+      currentFixed = targetFixedCash;
     }
     
     const isRetired = foundFireYear !== null && year >= foundFireYear;
@@ -39,7 +42,8 @@ export const calculateSimple = (params: CalcParams) => {
       livingExpenseWithdrawal,
       endInvestedCash: currentInvested,
       interestEarned,
-      isFire: isRetired
+      isFire: isRetired,
+      totalNetWorth: currentInvested + interestEarned + currentFixed
     });
     
     currentInvested += interestEarned;
@@ -49,16 +53,25 @@ export const calculateSimple = (params: CalcParams) => {
 };
 
 export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy', legacyParams?: { duration: number; target: number }) => {
-  const { general, initialIsaPrincipal, savings, preTaxRate, target, currentYear, remainingMonths } = params;
+  const { general, fixedCash, targetFixedCash, initialIsaPrincipal, savings, preTaxRate, target, currentYear, remainingMonths } = params;
   const netRate = preTaxRate * (1 - 0.154);
   const requiredFireCash = (target / (netRate / 100)) + target;
 
   let currentGeneral = general;
+  let currentFixed = fixedCash;
   let currentIsaPrincipal = initialIsaPrincipal;
   let currentIsaInterest = 0;
 
-  const checkFirePossible = (simGen: number, simIsaP: number, simIsaI: number): boolean => {
+  const checkFirePossible = (simGen: number, simIsaP: number, simIsaI: number, simFixed: number): boolean => {
     let sg = simGen, sp = simIsaP, si = simIsaI;
+    
+    const housingDiff = targetFixedCash - simFixed;
+    sg -= housingDiff;
+    if (sg < 0) {
+      sg += (sp + si - si * 0.099);
+      sp = 0; si = 0;
+    }
+    if (sg < 0) return false;
 
     if (mode === 'legacy' && legacyParams) {
       for (let j = 0; j < legacyParams.duration; j++) {
@@ -73,14 +86,7 @@ export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy'
       }
       return (sg + sp + si - si * 0.099) >= legacyParams.target;
     } else {
-      for (let j = 0; j < 60; j++) {
-        if ((sg + sp + si - si * 0.099) >= requiredFireCash) return true;
-        sg -= target;
-        if (sg < 0) return false;
-        sg += sg * (netRate / 100);
-        si += (sp + si) * (preTaxRate / 100);
-      }
-      return false;
+      return (sg + sp + si - si * 0.099) >= requiredFireCash;
     }
   };
 
@@ -93,8 +99,16 @@ export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy'
     const startIsaTotal = currentIsaPrincipal + currentIsaInterest;
     const potentialTotalCash = currentGeneral + currentIsaPrincipal + currentIsaInterest - (currentIsaInterest * 0.099);
     
-    if (foundFireYear === null && checkFirePossible(currentGeneral, currentIsaPrincipal, currentIsaInterest)) {
+    if (foundFireYear === null && checkFirePossible(currentGeneral, currentIsaPrincipal, currentIsaInterest, currentFixed)) {
       foundFireYear = year;
+      const housingDiff = targetFixedCash - currentFixed;
+      currentGeneral -= housingDiff;
+      currentFixed = targetFixedCash;
+      if (currentGeneral < 0) {
+        currentGeneral += (currentIsaPrincipal + currentIsaInterest - currentIsaInterest * 0.099);
+        currentIsaPrincipal = 0;
+        currentIsaInterest = 0;
+      }
     }
 
     const isRetired = foundFireYear !== null && year >= foundFireYear;
@@ -132,7 +146,8 @@ export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy'
     projection.push({
       year, startGeneralCash, startIsaTotal, savingsAdded, livingExpenseWithdrawal,
       isaCancelledThisYear, endGeneralCash: currentGeneral, endIsaTotal: currentIsaPrincipal + currentIsaInterest,
-      generalInterestEarned, isaInterestEarned, potentialTotalCash, isFire: isRetired
+      generalInterestEarned, isaInterestEarned, potentialTotalCash, isFire: isRetired,
+      totalNetWorth: currentGeneral + generalInterestEarned + currentIsaPrincipal + currentIsaInterest + isaInterestEarned + currentFixed
     });
 
     currentGeneral += generalInterestEarned;
@@ -143,7 +158,7 @@ export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy'
 };
 
 export const calculateReverse = (params: CalcParams, targetRetirementYears: number, retirementDuration: number, legacyTarget: number) => {
-  const { general, initialIsaPrincipal, savings, preTaxRate, currentYear, remainingMonths } = params;
+  const { general, fixedCash, targetFixedCash, initialIsaPrincipal, savings, preTaxRate, currentYear, remainingMonths } = params;
   const netRate = preTaxRate * (1 - 0.154);
   
   let sg = general;
@@ -163,12 +178,22 @@ export const calculateReverse = (params: CalcParams, targetRetirementYears: numb
   const accumulatedGeneral = sg;
   const accumulatedIsaTotal = sp + si;
   const isaCancelTax = si * 0.099;
-  const netTotalCash = accumulatedGeneral + accumulatedIsaTotal - isaCancelTax;
+  const netTotalCash = accumulatedGeneral + accumulatedIsaTotal - isaCancelTax + fixedCash;
+  const investableCashAtRetirement = Math.max(0, netTotalCash - targetFixedCash);
 
-  const maxInfiniteWithdrawal = netTotalCash * (netRate / 100);
+  const maxInfiniteWithdrawal = investableCashAtRetirement * (netRate / 100);
 
   const checkSustain = (withdrawal: number) => {
     let t_sg = sg, t_sp = sp, t_si = si;
+    
+    const housingDiff = targetFixedCash - fixedCash;
+    t_sg -= housingDiff;
+    if (t_sg < 0) {
+      t_sg += (t_sp + t_si - t_si * 0.099);
+      t_sp = 0; t_si = 0;
+      if (t_sg < 0) return false;
+    }
+
     for (let j = 0; j < retirementDuration; j++) {
       t_sg -= withdrawal;
       if (t_sg < 0) {

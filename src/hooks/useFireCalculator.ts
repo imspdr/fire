@@ -12,10 +12,12 @@ export const useFireCalculator = () => {
 
   const calculate = () => {
     const general = Number(inputs.investedCash) || 0;
+    const fixedCash = Number(inputs.fixedCash) || 0;
     const initialIsaPrincipal = Number(inputs.isaPrincipal) || 0;
     const savings = Number(inputs.annualSavings) || 0;
     const preTaxRate = Number(inputs.annualReturnRate) || 0;
     const target = Number(inputs.targetExpenses) || 0;
+    const targetFixedCash = inputs.mode === 'reverse' ? (Number(inputs.fixedCash) || 0) : (Number(inputs.targetFixedCash) || 0);
 
     if (preTaxRate <= 0) {
       alert('연 수익률은 0보다 커야 합니다.');
@@ -31,7 +33,7 @@ export const useFireCalculator = () => {
     const currentYear = currentDate.getFullYear();
     const remainingMonths = 12 - (currentDate.getMonth() + 1) + 1;
 
-    const baseParams: CalcParams = { general, initialIsaPrincipal, savings, preTaxRate, target, currentYear, remainingMonths };
+    const baseParams: CalcParams = { general, fixedCash, targetFixedCash, initialIsaPrincipal, savings, preTaxRate, target, currentYear, remainingMonths };
 
     if (inputs.mode === 'reverse') {
       const targetYears = Number(inputs.targetRetirementYears) || 10;

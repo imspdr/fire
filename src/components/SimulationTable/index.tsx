@@ -22,6 +22,7 @@ export const SimulationTable: FC<Props> = ({ mode, simpleResult, complexResult }
               <th>저축액</th>
               <th>생활비</th>
               <th>이자</th>
+              <th>총자산</th>
             </tr>
           </thead>
           <tbody>
@@ -34,6 +35,7 @@ export const SimulationTable: FC<Props> = ({ mode, simpleResult, complexResult }
                   {row.livingExpenseWithdrawal > 0 ? `-${formatNumber(row.livingExpenseWithdrawal)}` : 0}
                 </td>
                 <td style={{ color: 'var(--imspdr-success-1)' }}>+{formatNumber(row.interestEarned)}</td>
+                <td style={{ fontWeight: 'bold' }}>{formatNumber(row.totalNetWorth)}</td>
               </tr>
             ))}
           </tbody>
@@ -54,6 +56,7 @@ export const SimulationTable: FC<Props> = ({ mode, simpleResult, complexResult }
               <th>저축액</th>
               <th>생활비</th>
               <th>이자</th>
+              <th>총자산</th>
             </tr>
           </thead>
           <tbody>
@@ -70,6 +73,7 @@ export const SimulationTable: FC<Props> = ({ mode, simpleResult, complexResult }
                   {row.livingExpenseWithdrawal > 0 ? `-${formatNumber(row.livingExpenseWithdrawal)}` : 0}
                 </td>
                 <td style={{ color: 'var(--imspdr-success-1)' }}>+{formatNumber(row.generalInterestEarned + row.isaInterestEarned)}</td>
+                <td style={{ fontWeight: 'bold' }}>{formatNumber(row.totalNetWorth)}</td>
               </tr>
             ))}
           </tbody>

@@ -11,10 +11,12 @@ const HomePage: FC = () => {
   const {
     mode, setMode,
     investedCash, setInvestedCash,
+    fixedCash, setFixedCash,
     isaPrincipal, setIsaPrincipal,
     annualSavings, setAnnualSavings,
     annualReturnRate, setAnnualReturnRate,
     targetExpenses, setTargetExpenses,
+    targetFixedCash, setTargetFixedCash,
     retirementDuration, setRetirementDuration,
     targetLegacy, setTargetLegacy,
     targetRetirementYears, setTargetRetirementYears,
@@ -41,6 +43,13 @@ const HomePage: FC = () => {
             unit="만원"
             placeholder="10000"
           />
+          <NumberInput
+            label="고정 자산 (전세금 등, 이자 없음)"
+            value={fixedCash}
+            onChange={setFixedCash}
+            unit="만원"
+            placeholder="예: 20000"
+          />
           {mode !== 'simple' && (
             <NumberInput
               label="현재 ISA 계좌 원금 (최대 1억)"
@@ -58,13 +67,22 @@ const HomePage: FC = () => {
             placeholder="3000"
           />
           {mode !== 'reverse' && (
-            <NumberInput
-              label="목표 연 생활비"
-              value={targetExpenses}
-              onChange={setTargetExpenses}
-              unit="만원"
-              placeholder="4000"
-            />
+            <>
+              <NumberInput
+                label="목표 연 생활비"
+                value={targetExpenses}
+                onChange={setTargetExpenses}
+                unit="만원"
+                placeholder="4000"
+              />
+              <NumberInput
+                label="목표 거주/고정 자산"
+                value={targetFixedCash}
+                onChange={setTargetFixedCash}
+                unit="만원"
+                placeholder="예: 30000"
+              />
+            </>
           )}
           {mode === 'reverse' && (
             <NumberInput
