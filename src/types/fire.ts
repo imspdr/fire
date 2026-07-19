@@ -34,6 +34,7 @@ export interface CalcParams {
   initialIsaPrincipal: number;
   savings: number;
   preTaxRate: number;
+  postRetirementRate: number;
   target: number;
   currentYear: number;
   remainingMonths: number;

@@ -15,6 +15,7 @@ const HomePage: FC = () => {
     isaPrincipal, setIsaPrincipal,
     annualSavings, setAnnualSavings,
     annualReturnRate, setAnnualReturnRate,
+    postRetirementReturnRate, setPostRetirementReturnRate,
     targetExpenses, setTargetExpenses,
     targetFixedCash, setTargetFixedCash,
     retirementDuration, setRetirementDuration,
@@ -94,11 +95,18 @@ const HomePage: FC = () => {
             />
           )}
           <NumberInput
-            label="예상 연 수익률 (세전)"
+            label="은퇴 전 수익률 (세전)"
             value={annualReturnRate}
             onChange={setAnnualReturnRate}
             unit="%"
             placeholder="5"
+          />
+          <NumberInput
+            label="은퇴 후 수익률 (세전)"
+            value={postRetirementReturnRate}
+            onChange={setPostRetirementReturnRate}
+            unit="%"
+            placeholder="4"
           />
           { (mode === 'legacy' || mode === 'reverse') && (
             <>

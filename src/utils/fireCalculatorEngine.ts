@@ -1,9 +1,10 @@
 import { CalcParams, YearData, ComplexYearData } from '../types/fire';
 
 export const calculateSimple = (params: CalcParams) => {
-  const { general, fixedCash, targetFixedCash, savings, preTaxRate, target, currentYear, remainingMonths } = params;
+  const { general, fixedCash, targetFixedCash, savings, preTaxRate, postRetirementRate, target, currentYear, remainingMonths } = params;
   const netRate = preTaxRate * (1 - 0.154);
-  const requiredFireCash = (target / (netRate / 100)) + target;
+  const postNetRate = postRetirementRate * (1 - 0.154);
+  const requiredFireCash = (target / (postNetRate / 100)) + target;
   
   let currentInvested = general;
   let currentFixed = fixedCash;
@@ -33,7 +34,8 @@ export const calculateSimple = (params: CalcParams) => {
       currentInvested -= livingExpenseWithdrawal;
     }
     
-    const interestEarned = currentInvested * (netRate / 100);
+    const currentRate = isRetired ? postNetRate : netRate;
+    const interestEarned = currentInvested * (currentRate / 100);
     
     projection.push({
       year,
@@ -53,9 +55,10 @@ export const calculateSimple = (params: CalcParams) => {
 };
 
 export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy', legacyParams?: { duration: number; target: number }) => {
-  const { general, fixedCash, targetFixedCash, initialIsaPrincipal, savings, preTaxRate, target, currentYear, remainingMonths } = params;
+  const { general, fixedCash, targetFixedCash, initialIsaPrincipal, savings, preTaxRate, postRetirementRate, target, currentYear, remainingMonths } = params;
   const netRate = preTaxRate * (1 - 0.154);
-  const requiredFireCash = (target / (netRate / 100)) + target;
+  const postNetRate = postRetirementRate * (1 - 0.154);
+  const requiredFireCash = (target / (postNetRate / 100)) + target;
 
   let currentGeneral = general;
   let currentFixed = fixedCash;
@@ -81,8 +84,8 @@ export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy'
           sp = 0; si = 0;
           if (sg < 0) return false;
         }
-        sg += sg * (netRate / 100);
-        si += (sp + si) * (preTaxRate / 100);
+        sg += sg * (postNetRate / 100);
+        si += (sp + si) * (postRetirementRate / 100);
       }
       return (sg + sp + si - si * 0.099) >= legacyParams.target;
     } else {
@@ -140,8 +143,11 @@ export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy'
       currentGeneral -= livingExpenseWithdrawal;
     }
 
-    const generalInterestEarned = currentGeneral * (netRate / 100);
-    const isaInterestEarned = (currentIsaPrincipal + currentIsaInterest) * (preTaxRate / 100);
+    const currentGeneralRate = isRetired ? postNetRate : netRate;
+    const currentIsaRate = isRetired ? postRetirementRate : preTaxRate;
+
+    const generalInterestEarned = currentGeneral * (currentGeneralRate / 100);
+    const isaInterestEarned = (currentIsaPrincipal + currentIsaInterest) * (currentIsaRate / 100);
 
     projection.push({
       year, startGeneralCash, startIsaTotal, savingsAdded, livingExpenseWithdrawal,
@@ -158,8 +164,9 @@ export const calculateIsaModel = (params: CalcParams, mode: 'complex' | 'legacy'
 };
 
 export const calculateReverse = (params: CalcParams, targetRetirementYears: number, retirementDuration: number, legacyTarget: number) => {
-  const { general, fixedCash, targetFixedCash, initialIsaPrincipal, savings, preTaxRate, currentYear, remainingMonths } = params;
+  const { general, fixedCash, targetFixedCash, initialIsaPrincipal, savings, preTaxRate, postRetirementRate, currentYear, remainingMonths } = params;
   const netRate = preTaxRate * (1 - 0.154);
+  const postNetRate = postRetirementRate * (1 - 0.154);
   
   let sg = general;
   let sp = initialIsaPrincipal;
@@ -181,7 +188,7 @@ export const calculateReverse = (params: CalcParams, targetRetirementYears: numb
   const netTotalCash = accumulatedGeneral + accumulatedIsaTotal - isaCancelTax + fixedCash;
   const investableCashAtRetirement = Math.max(0, netTotalCash - targetFixedCash);
 
-  const maxInfiniteWithdrawal = investableCashAtRetirement * (netRate / 100);
+  const maxInfiniteWithdrawal = investableCashAtRetirement * (postNetRate / 100);
 
   const checkSustain = (withdrawal: number) => {
     let t_sg = sg, t_sp = sp, t_si = si;
@@ -201,8 +208,8 @@ export const calculateReverse = (params: CalcParams, targetRetirementYears: numb
         t_sp = 0; t_si = 0;
         if (t_sg < 0) return false;
       }
-      t_sg += t_sg * (netRate / 100);
-      t_si += (t_sp + t_si) * (preTaxRate / 100);
+      t_sg += t_sg * (postNetRate / 100);
+      t_si += (t_sp + t_si) * (postRetirementRate / 100);
     }
     return (t_sg + t_sp + t_si - t_si * 0.099) >= legacyTarget;
   };

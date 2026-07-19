@@ -19,6 +19,7 @@ export const useFireInputs = () => {
   const [retirementDuration, setRetirementDuration] = useState(() => getSavedValue('fire_retirementDuration', '40'));
   const [targetLegacy, setTargetLegacy] = useState(() => getSavedValue('fire_targetLegacy', '5000'));
   const [targetRetirementYears, setTargetRetirementYears] = useState(() => getSavedValue('fire_targetRetirementYears', '10'));
+  const [postRetirementReturnRate, setPostRetirementReturnRate] = useState(() => getSavedValue('fire_postRetirementReturnRate', '4'));
 
   useEffect(() => {
     localStorage.setItem('fire_mode', mode);
@@ -32,7 +33,8 @@ export const useFireInputs = () => {
     localStorage.setItem('fire_retirementDuration', retirementDuration);
     localStorage.setItem('fire_targetLegacy', targetLegacy);
     localStorage.setItem('fire_targetRetirementYears', targetRetirementYears);
-  }, [mode, investedCash, fixedCash, isaPrincipal, annualSavings, annualReturnRate, targetExpenses, targetFixedCash, retirementDuration, targetLegacy, targetRetirementYears]);
+    localStorage.setItem('fire_postRetirementReturnRate', postRetirementReturnRate);
+  }, [mode, investedCash, fixedCash, isaPrincipal, annualSavings, annualReturnRate, targetExpenses, targetFixedCash, retirementDuration, targetLegacy, targetRetirementYears, postRetirementReturnRate]);
 
   return {
     mode, setMode,
@@ -46,5 +48,6 @@ export const useFireInputs = () => {
     retirementDuration, setRetirementDuration,
     targetLegacy, setTargetLegacy,
     targetRetirementYears, setTargetRetirementYears,
+    postRetirementReturnRate, setPostRetirementReturnRate,
   };
 };

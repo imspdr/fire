@@ -1,6 +1,6 @@
 {
   "name": "fire",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Template",
   "scripts": {
     "dev": "webpack serve --mode development",
